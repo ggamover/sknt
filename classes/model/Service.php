@@ -9,6 +9,8 @@ use App\classes\Sknt;
  * Class Service
  * @package App\classes\model
  *
+ * Модель для таблицы services
+ *
  * @property int $ID
  * @property int $user_id
  * @property int $tarif_id
@@ -18,6 +20,8 @@ use App\classes\Sknt;
 class Service
 {
 	/**
+	 * Получить запись по коду
+	 *
 	 * @param $userId
 	 * @param $serviceId
 	 * @return Service
@@ -40,6 +44,11 @@ class Service
 
 	}
 
+	/**
+	 * записать текущую модель в БД
+	 *
+	 * @return false|\PDOStatement
+	 */
 	public function save()
 	{
 		$dbo = Sknt::getDbo();
@@ -48,9 +57,12 @@ class Service
 			'tarif_id' => $this->tarif_id,
 			'payday' => $this->payday
 		];
+
 		if($this->ID){
+//			если есть ID, то обновление
 			$sql = $this->updateSql();
 		}else{
+//			иначе создание
 			$sql = $this->insertSql();
 			$params['user_id'] = $this->user_id;
 		}
@@ -59,6 +71,11 @@ class Service
 		return $result;
 	}
 
+	/**
+	 * создать SQL запрос на вставку
+	 *
+	 * @return array
+	 */
 	protected function insertSql()
 	{
 		return [
@@ -69,6 +86,10 @@ class Service
 
 	}
 
+	/**
+	 * создать SQL запрос на обновление
+	 * @return array
+	 */
 	protected function updateSql()
 	{
 		return [
@@ -79,11 +100,21 @@ class Service
 		];
 	}
 
+	/**
+	 * расчитать и установить дату платежа
+	 *
+	 * @param $monthNum месяцев до платежа
+	 * @throws \Exception
+	 */
 	public function setPaydayByMonthNum($monthNum)
 	{
+//		текущая дата
 		$now = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
+//		установить полночь
 		$now->setTime(0,0,0);
+//		добавить заданное количество месяцев
 		$now->modify("+{$monthNum} months");
+//		записать результат в свойство модели
 		$this->payday = $now->format('Y-m-d');
 	}
 }

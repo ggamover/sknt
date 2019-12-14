@@ -6,6 +6,14 @@ namespace App\classes;
 
 use PDO;
 
+/***
+ * Class Db
+ *
+ * класс для работы с БД при помощи PDO
+ *
+ * @package App\classes
+ */
+
 class Db
 {
 	private $connection;
@@ -31,11 +39,6 @@ class Db
 		$statement->execute($params);
 
 		return $statement;
-	}
-
-	public function quote($param)
-	{
-		return $this->connection->quote($param);
 	}
 
 }

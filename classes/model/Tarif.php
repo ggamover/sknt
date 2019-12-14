@@ -10,6 +10,8 @@ use App\classes\Sknt;
  * Class Tarif
  * @package App\classes\model
  *
+ * модель для таблицы tarif
+ *
  * @property int $ID
  * @property string $title
  * @property float $price
@@ -23,6 +25,8 @@ class Tarif
 {
 
 	/**
+	 * Получить запись по коду
+	 *
 	 * @param $tarifId
 	 * @return Tarif
 	 */
@@ -43,6 +47,8 @@ class Tarif
 	}
 
 	/**
+	 * Получить список всех записей, при желании с фильтром по группе тарифов
+	 *
 	 * @param $userId
 	 * @param $serviceId
 	 *

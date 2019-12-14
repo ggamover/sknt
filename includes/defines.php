@@ -1,3 +1,5 @@
 <?php
+// рабочий каталог
 define('APPDIR', dirname(__DIR__));
-define('DEBUG', 1);
+// флаг для принудительного вывода ошибок
+define('DEBUG', 0);
