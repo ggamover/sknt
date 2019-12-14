@@ -6,7 +6,7 @@ class Response
 {
 	protected $result = 'ok';
 
-	public function result($result = true)
+	public function setResult($result = true)
 	{
 		$this->result = $result ? 'ok' : 'error';
 		return $this;

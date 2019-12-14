@@ -39,4 +39,9 @@ class Service
 		return $statement->fetchObject(static::class);
 
 	}
+
+	public static function save($userId, $tarifId)
+	{
+
+	}
 }
