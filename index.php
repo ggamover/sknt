@@ -11,6 +11,7 @@ if(DEBUG){
 	ini_set('error_reporting', E_ALL);
 }
 
+require __DIR__ . '/db_cfg.php';
 require __DIR__ . '/includes/autoload.php';
 
 (new \App\classes\Sknt())->run();
