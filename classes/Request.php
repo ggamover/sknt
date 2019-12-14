@@ -9,6 +9,10 @@ namespace App\classes;
  *
  * @property string $method
  * @property array $path
+ *
+ * @property int $user_id
+ * @property int $service_id
+ *
  */
 class Request
 {
@@ -18,7 +22,7 @@ class Request
 	public function __construct()
 	{
 		$this->method = $_SERVER['REQUEST_METHOD'] ? $_SERVER['REQUEST_METHOD'] : 'GET';
-		$this->path = $this->parseUrl();
+		$this->parseUrl();
 	}
 
 	protected function parseUrl()
@@ -29,6 +33,16 @@ class Request
 		$path = str_replace($prefix, '', $path);
 		$path = trim($path, '/');
 		$parts = explode('/', $path);
-		return array_filter($parts);
+		$parts = array_filter($parts);
+		$this->path = $parts;
 	}
+
+	public function getId($key)
+	{
+		$index = array_search($key, $this->path);
+		if($index !== false && isset($this->path[$index + 1])){
+			return $this->path[$index + 1];
+		}
+	}
+
 }

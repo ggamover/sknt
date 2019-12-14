@@ -23,7 +23,14 @@ class Db
 	 */
 	public function query($query, $params = [])
 	{
-		return $this->connection->query($query);
+		if(is_array($query)){
+			$query = implode(PHP_EOL, $query);
+		}
+
+		$statement = $this->connection->prepare($query);
+		$statement->execute($params);
+
+		return $statement;
 	}
 
 }
