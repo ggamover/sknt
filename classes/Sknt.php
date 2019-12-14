@@ -12,13 +12,21 @@ class Sknt
 	public function run()
 	{
 		$request = new Request();
-		$userId = $request->getId('users');
-		$serviceId = $request->getId('services');
+		$userId = (int)$request->getId('users');
+		$serviceId = (int)$request->getId('services');
 
 		switch($request->method){
 			case Request::REQUEST_METHOD_GET:
 				$service = Service::load($userId, $serviceId);
-				(new Response)->send(['tarifs' => Tarif::getList($service->tarif_id)]);
+				$tarif = Tarif::load($service->tarif_id);
+				(new Response)->send([
+					'tarifs' => [[
+						'title' => $tarif->title,
+						'link' => $tarif->link,
+						'speed' => $tarif->speed,
+						'tarifs' => Tarif::getList($tarif->tarif_group_id)
+					]]
+				]);
 				break;
 			case Request::REQUEST_METHOD_PUT:
 

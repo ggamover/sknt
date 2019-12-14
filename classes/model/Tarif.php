@@ -21,25 +21,66 @@ use App\classes\Sknt;
  */
 class Tarif
 {
+
+	/**
+	 * @param $tarifId
+	 * @return Tarif
+	 */
+	public static function load($tarifId)
+	{
+		$dbo = Sknt::getDbo();
+		$query = [
+			'SELECT * FROM `tarifs`',
+			'WHERE ID = :id',
+		];
+
+		$statement = $dbo->query($query, [
+			'id' => $tarifId
+		]);
+
+		return $statement->fetchObject(static::class);
+
+	}
+
 	/**
 	 * @param $userId
 	 * @param $serviceId
 	 *
 	 * @return Tarif[]
 	 */
-	public static function getList($tarifId)
+	public static function getList($groupId)
 	{
 		$dbo = Sknt::getDbo();
 
+//		день след. оплаты
+		$payDayExpr = implode(PHP_EOL, [
+			'CONCAT(',
+				'UNIX_TIMESTAMP(', // вывод в timestamp
+					'ADDDATE(TIMESTAMP(NOW()), INTERVAL pay_period MONTH)', // прибавим pay_period к этой полночи
+				'),',
+				"IF(NOW() > UTC_TIMESTAMP, '+', ''),", // подправим знак сравнив текущее время с гринвичем
+				"TIME_FORMAT(TIMEDIFF(NOW(), UTC_TIMESTAMP), '%H:%i')", // разница времени с гринвичем
+			')'
+		]);
+
 		$sql = [
-			'SELECT * FROM `tarifs`',
+			'SELECT',
+			implode(',', [
+				'ID',
+				'title',
+				'ROUND(`price`) AS `price`',
+				'pay_period',
+				 $payDayExpr . ' AS `new_payday`',
+				'speed'
+			]),
+			'FROM `tarifs`'
 		];
 
-		if($tarifId){
-			$sql[] = 'WHERE `tarif_group_id` = (SELECT `tarif_group_id` FROM `tarifs` WHERE ID = :id)';
+		if($groupId){
+			$sql[] = 'WHERE `tarif_group_id` = :group_id';
 		}
 
-		$statement = $dbo->query($sql, ['id' => $tarifId]);
+		$statement = $dbo->query($sql, ['group_id' => $groupId]);
 
 		$rows = [];
 		while ($row = $statement->fetchObject(static::class)){
