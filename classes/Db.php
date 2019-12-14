@@ -33,6 +33,9 @@ class Db
 		return $statement;
 	}
 
-
+	public function quote($param)
+	{
+		return $this->connection->quote($param);
+	}
 
 }

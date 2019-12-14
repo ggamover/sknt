@@ -40,8 +40,50 @@ class Service
 
 	}
 
-	public static function save($userId, $tarifId)
+	public function save()
 	{
+		$dbo = Sknt::getDbo();
+		$params = [
+			'id' => $this->ID,
+			'tarif_id' => $this->tarif_id,
+			'payday' => $this->payday
+		];
+		if($this->ID){
+			$sql = $this->updateSql();
+		}else{
+			$sql = $this->insertSql();
+			$params['user_id'] = $this->user_id;
+		}
 
+		$result = $dbo->query($sql, $params);
+		return $result;
+	}
+
+	protected function insertSql()
+	{
+		return [
+			'INSERT INTO `services`',
+			'(`user_id`, `tarif_id`, `payday`)',
+			'VALUES (:user_id, :tarif_id, :payday)',
+		];
+
+	}
+
+	protected function updateSql()
+	{
+		return [
+			'UPDATE `services`',
+			'SET `tarif_id` = :tarif_id,',
+			'`payday` = :payday',
+			'WHERE ID = :id'
+		];
+	}
+
+	public function setPaydayByMonthNum($monthNum)
+	{
+		$now = new \DateTime('now', new \DateTimeZone('Europe/Moscow'));
+		$now->setTime(0,0,0);
+		$now->modify("+{$monthNum} months");
+		$this->payday = $now->format('Y-m-d');
 	}
 }

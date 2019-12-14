@@ -19,10 +19,15 @@ class Request
 	const REQUEST_METHOD_GET = 'GET';
 	const REQUEST_METHOD_PUT = 'PUT';
 
+	protected $data;
+
 	public function __construct()
 	{
 		$this->method = $_SERVER['REQUEST_METHOD'] ? $_SERVER['REQUEST_METHOD'] : 'GET';
 		$this->parseUrl();
+		if($this->method === self::REQUEST_METHOD_PUT){
+			$this->loadInput();
+		}
 	}
 
 	protected function parseUrl()
@@ -45,4 +50,19 @@ class Request
 		}
 	}
 
+	public function loadInput()
+	{
+		$input = file_get_contents('php://input');
+		if($input){
+			$this->data = json_decode($input, JSON_OBJECT_AS_ARRAY);
+		}
+	}
+
+	public function getParam($key, $default = null)
+	{
+		if($this->data && isset($this->data[$key])){
+			return $this->data[$key];
+		}
+		return $default;
+	}
 }
