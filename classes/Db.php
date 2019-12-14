@@ -25,4 +25,5 @@ class Db
 	{
 		return $this->connection->query($query);
 	}
+
 }
