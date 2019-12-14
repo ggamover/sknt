@@ -13,8 +13,7 @@ class Sknt
 		foreach ($dbo->query('SELECT * FROM tarifs ORDER BY `title`') as $row){
 			$rows[] = $row;
 		}
-		var_dump($rows);
-
-		exit();
+		(new Response(true))->send(['tarifs' => $rows]);
+		exit;
 	}
 }
